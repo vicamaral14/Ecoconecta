@@ -25,8 +25,22 @@ elseif ($acao == 'cadastro') {
     echo $conn->query($sql) ? json_encode(["sucesso" => "✅ Cadastro realizado!"]) : json_encode(["erro" => $conn->error]);
 }
 elseif ($acao == 'perfil_update') {
-    $res = $eco->atualizarPerfil($_POST['id'], $_POST['nome'], $_POST['email'], $_POST['tel'], $_POST['end'], $_POST['senha']);
-    echo json_encode($res ? ["sucesso" => "✅ Perfil atualizado!"] : ["erro" => "Erro ao atualizar"]);
+    $id = (int)$_POST['id'];
+    $nome = $_POST['nome'];
+    $email = $_POST['email'];
+    $tel = $_POST['tel'];
+    $end = $_POST['end'];
+    $senha = !empty($_POST['senha']) ? $_POST['senha'] : null;
+
+    $res = $eco->atualizarPerfil($id, $nome, $email, $tel, $end, $senha);
+    
+    if($res) {
+        // Retorna os dados atualizados para o Front-end
+        echo json_encode($eco->buscarUsuario($id));
+    } else {
+        echo json_encode(["erro" => "Erro ao atualizar perfil."]);
+    }
+    exit;
 }
 elseif ($acao == 'perfil_excluir') {
     echo json_encode($eco->excluirPerfil($_POST['id']) ? ["sucesso" => "Conta excluída."] : ["erro" => "Erro"]);
