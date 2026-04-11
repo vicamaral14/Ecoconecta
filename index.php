@@ -116,6 +116,7 @@
         </div>
 
         <div id="area-perfil" class="hidden">
+            <button onclick="salvarPerfil()" style="background:var(--primary)">Salvar Alterações</button>
             <h3>Meus Dados</h3>
             <input type="text" id="p_nome" placeholder="Nome">
             <input type="email" id="p_email" placeholder="E-mail">
@@ -243,6 +244,10 @@ async function fazerLogin() {
         
         if(res.id_usuario) {
             user = res;
+            document.getElementById('p_nome').value = user.nome;
+document.getElementById('p_email').value = user.email;
+document.getElementById('p_tel').value = user.telefone;
+document.getElementById('p_end').value = user.endereco;
             user.id = res.id_usuario;
             document.getElementById('tela-login').classList.add('hidden');
             
@@ -253,7 +258,6 @@ async function fazerLogin() {
                 document.getElementById('boas-vindas-col').innerText = "Olá, " + user.nome;
                 document.getElementById('tela-coletor').classList.remove('hidden');
                 
-                // --- ADICIONE ESTAS DUAS LINHAS ---
                 carregarSelectMateriais(); 
                 carregarMural();
                 // ----------------------------------
@@ -545,6 +549,33 @@ async function enviarDoacao() {
         alert("Erro de conexão.");
     } finally {
         setLoading('btn-enviar-doacao', false);
+    }
+}
+async function salvarPerfil() {
+    const fd = new FormData();
+    fd.append('acao', 'perfil_update');
+    fd.append('id', user.id);
+    fd.append('nome', document.getElementById('p_nome').value);
+    fd.append('email', document.getElementById('p_email').value);
+    fd.append('tel', document.getElementById('p_tel').value);
+    fd.append('end', document.getElementById('p_end').value);
+     
+    try {
+        const r = await fetch('salvar.php', { method: 'POST', body: fd });
+        const res = await r.json();
+        
+        if(res.id_usuario) {
+            user = res; // Atualiza o objeto global user
+            alert("✅ Perfil atualizado com sucesso!");
+            togglePerfil();
+            // Atualiza os textos na tela
+            if(document.getElementById('boas-vindas')) document.getElementById('boas-vindas').innerText = "Olá, " + user.nome;
+            if(document.getElementById('boas-vindas-col')) document.getElementById('boas-vindas-col').innerText = "Olá, " + user.nome;
+        } else {
+            alert(res.erro || "Erro ao salvar.");
+        }
+    } catch (e) {
+        alert("Erro de conexão.");
     }
 }
 
