@@ -17,6 +17,12 @@ class Eco {
         }
         return false;
     }
+    public function buscarUsuario($id) {
+    $id = (int)$id;
+    $sql = "SELECT id_usuario, nome, email, documento, telefone, endereco, tipo_usuario FROM USUARIO WHERE id_usuario = $id";
+    $res = $this->conn->query($sql);
+    return ($res && $u = $res->fetch_assoc()) ? $u : false;
+}
 
     public function atualizarPerfil($id, $nome, $email, $tel, $end, $senha = null) {
         $id = (int)$id;
