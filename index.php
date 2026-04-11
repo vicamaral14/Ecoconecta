@@ -1,3 +1,4 @@
+<?php // TESTE DE SINCRONIZACAO ?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
